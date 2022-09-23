@@ -1,0 +1,26 @@
+location='westeurope'
+resourceGroup='rg-az204-01'
+
+myAppName=az204app$RANDOM
+
+git clone https://github.com/Azure-Samples/html-docs-hello-world.git
+
+cd html-docs-hello-world
+
+az group create --name $resourceGroup --location $location
+app_url=$(az webapp up --resource-group $resourceGroup \
+                    --name $myAppName \
+                    --location $location \
+                    --sku F1 \
+                    --html \
+                    --query URL -o tsv)
+
+read -p "Navigate to http://${app_url}, then edit index.html, and then come back here and press enter to update the application ..."
+
+az webapp up --resource-group $resourceGroup --name $myAppName --html
+
+read -p "Navigate back to http://${app_url}, refresh the page to see the change, and when done press enter to remove the resources ..."
+
+# You can now safely delete the az204-vm-rg resource group from your account by running the command below.
+
+az group delete --name $resourceGroup --no-wait --yes

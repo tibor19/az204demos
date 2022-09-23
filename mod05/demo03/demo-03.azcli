@@ -1,0 +1,28 @@
+
+location='westeurope' # replace westeurope with a region close to you
+resourceGroup='rg-az204-05-03'
+myContainerRegistry=az204acr$RANDOM
+
+imageName='sample/hello-world'
+imageVersion='v1'
+
+az group create --name $resourceGroup --location $location
+
+az acr create --resource-group $resourceGroup --name $myContainerRegistry --sku Basic
+
+echo FROM mcr.microsoft.com/hello-world > Dockerfile
+
+az acr build --image ${imageName}:${imageVersion}  \
+    --registry $myContainerRegistry \
+    --file Dockerfile .
+
+az acr repository list --name $myContainerRegistry --output table
+
+az acr repository show-tags --name $myContainerRegistry \
+    --repository ${imageName} --output table
+
+az acr run --registry $myContainerRegistry \
+    --cmd "\$Registry/${imageName}:${imageVersion}" /dev/null
+
+rm Dockerfile
+az group delete --name $resourceGroup --no-wait --yes

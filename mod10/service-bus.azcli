@@ -1,0 +1,24 @@
+location='westeurope'
+resourceGroup='rg-az204-10'
+
+myNameSpaceName=az204svcbus$RANDOM
+
+az provider register --namespace Microsoft.ServiceBus
+
+az provider show --namespace Microsoft.ServiceBus --query "registrationState"
+
+az group create --name $resourceGroup --location $location
+
+az servicebus namespace create \
+    --resource-group $resourceGroup \
+    --name $myNameSpaceName \
+    --location $location
+
+az servicebus queue create \
+    --resource-group $resourceGroup \
+    --namespace-name $myNameSpaceName \
+    --name az204-queue
+
+# Get the RootManageSharedAccessKey SAS Policy and use it in the C# program
+
+az group delete --name $resourceGroup --no-wait --yes

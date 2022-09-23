@@ -1,0 +1,24 @@
+
+location='westeurope' # replace westeurope with a region close to you
+resourceGroup='rg-az204-05-04'
+myContainerName='mycontainer'
+dnsNameLabel=aci-example-$RANDOM
+
+az group create --name $resourceGroup --location $location
+
+az container create --resource-group $resourceGroup \
+    --name $myContainerName \
+    --image mcr.microsoft.com/azuredocs/aci-helloworld \
+    --ports 80 \
+    --dns-name-label $dnsNameLabel \
+    --restart-policy OnFailure \
+    --environment-variables 'NumWords'='5' 'MinLength'='8'\
+    --location $location 
+
+az container show --resource-group $resourceGroup \
+    --name $myContainerName \
+    --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" \
+    --out tsv
+
+
+az group delete --name $resourceGroup --no-wait --yes

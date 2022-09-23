@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "mod02": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7017",
+      "launchBrowser": false
+    }
+  }
+}

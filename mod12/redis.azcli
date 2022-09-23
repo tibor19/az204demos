@@ -1,0 +1,15 @@
+location='westeurope'
+resourceGroup='rg-az204-12'
+
+myRedisName=az204redis$RANDOM
+
+az group create --name $resourceGroup --location $location
+
+az redis create --location $location \
+    --resource-group $resourceGroup \
+    --name $myRedisName \
+    --sku Basic --vm-size c0
+
+
+
+az group delete --name $resourceGroup --no-wait --yes

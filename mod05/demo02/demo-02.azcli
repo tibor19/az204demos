@@ -1,0 +1,20 @@
+# Set some variables to avoid repetition
+
+location='westeurope' # replace westeurope with a region close to you
+resourceGroup='rg-az204-05-02'
+
+# Create a resource group with the `az group create`` command. The command below creates a resource group named $vmName $location region.
+
+az group create --name $resourceGroup --location $location
+
+accountName=$(az deployment group create \
+    --resource-group $resourceGroup \
+    --template-file azuredeploy.json \
+    --parameters azuredeploy.parameters.json \
+    --query properties.outputs.accountName.value -o tsv)
+
+az storage account show --resource-group $resourceGroup --name $accountName
+
+# You can now safely delete the resource group from your account by running the command below.
+
+az group delete --name $resourceGroup --no-wait --yes

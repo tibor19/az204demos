@@ -1,0 +1,15 @@
+resourceGroup='rg-az204-08'
+myApiName=az204-apim-$RANDOM
+location=westeurope
+myEmail=test@test.com
+
+az group create --name $resourceGroup --location $location
+
+az apim create -n $myApiName \
+    --location $myLocation \
+    --publisher-email $myEmail  \
+    --resource-group $resourceGroup \
+    --publisher-name AZ204-APIM-Exercise \
+    --sku-name Consumption
+
+az group delete --name $resourceGroup --no-wait --yes

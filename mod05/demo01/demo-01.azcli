@@ -1,0 +1,44 @@
+# Exercise: Create a virtual machine by using the Azure CLI
+
+# Set some variables to avoid repetition
+
+location='westeurope' # replace westeurope with a region close to you
+resourceGroup='rg-az204-05-01'
+vmName='az204vm'
+adminUsername='azureuser'
+
+# Create a resource group with the `az group create`` command. The command below creates a resource group named $vmName $location region.
+
+az group create --name $resourceGroup --location $location
+
+# Create a VM with the `az vm create`` command. The command below creates a Linux VM named $vmName with an admin user named azureuser.
+
+ip_address=$(az vm create \
+    --resource-group $resourceGroup \
+    --name $vmName \
+    --image UbuntuLTS \
+    --generate-ssh-keys \
+    --admin-username $adminUsername \
+    --public-ip-sku Standard \
+    --location $location \
+    --query publicIpAddress \
+    --custom-data cloud-init.txt \
+    --output tsv)
+
+# By default, only SSH connections are opened when you create a Linux VM in Azure. Use az vm open-port to open TCP port 80 for use with the NGINX web server:
+
+az vm open-port --port 80 \
+--resource-group $resourceGroup \
+--name $vmName
+
+# Connect to your VM by using SSH, and install the NGINX web server.
+
+ssh ${adminUsername}@${ip_address} "sudo apt-get -y update; sudo apt-get -y install nginx"
+
+# Use a web browser of your choice to view the default NGINX welcome page. Use the public IP address of your VM as the web address. The following example shows the default NGINX web site:
+
+read -p "Navigate to http://$ip_address and when done press enter to remove the resources ..."
+
+# You can now safely delete the az204-vm-rg resource group from your account by running the command below.
+
+az group delete --name $resourceGroup --no-wait --yes
